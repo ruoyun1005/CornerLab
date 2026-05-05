@@ -4,3 +4,47 @@
 body {
   margin: 0;
 }
+
+@font-face {
+  font-family: "Line Seed TW Bold";
+  src: url("/fonts/LINESeedTW_OTF_Bd.otf") format("opentype");
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Line Seed TW ExtraBold";
+  src: url("/fonts/LINESeedTW_OTF_Eb.otf") format("opentype");
+  font-style: normal;
+}
+
+.text {
+  font-family: Line Seed TW Bold;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #252525;
+}
+
+.bold-text {
+  font-family: Line Seed TW ExtraBold;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #252525;
+}
+
+.title-text {
+  font-family: Line Seed TW ExtraBold;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #252525;
+}
+
+.number-text {
+  font-family: var(--font-fascinate), cursive;
+  font-size: 80px;
+}
+
+.option-card {
+  border: 2px solid #252525;
+  border-radius: 16px;
+  box-shadow: 0 18px 0 #252525;
+}
