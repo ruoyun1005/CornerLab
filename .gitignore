@@ -16,7 +16,7 @@
 
 
 #fonts
-public/fonts/
+
 # next.js
 /.next/
 /out/

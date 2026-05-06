@@ -7,13 +7,13 @@ body {
 
 @font-face {
   font-family: "Line Seed TW Bold";
-  src: url("/fonts/LINESeedTW_OTF_Bd.otf") format("opentype");
+  src: url("/fonts/LINESeedTW_OTF_Bd.woff2") format("opentype");
   font-style: normal;
 }
 
 @font-face {
   font-family: "Line Seed TW ExtraBold";
-  src: url("/fonts/LINESeedTW_OTF_Eb.otf") format("opentype");
+  src: url("/fonts/LINESeedTW_OTF_Eb.woff2") format("opentype");
   font-style: normal;
 }
 
