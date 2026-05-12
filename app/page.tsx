@@ -1,11 +1,9 @@
 "use client";
 import Link from "next/link";
+import ActionButton from "../components/ActionButton"
 
 export default function Home() {
 
-
-  
-  
   //1. 首頁     /
   //2. 答題     /question
   //3. 載入畫面  /loading
