@@ -28,6 +28,7 @@ export type resultData = {
     slogan : string;
     description : string;
     color : string;
+    image: string;
     stats : {
         label : string;
         value : number;

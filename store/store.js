@@ -117,7 +117,7 @@ const initialScore = {
 };
   
 
-const usePsyScore = create((set) =>({
+const usePsyScore = create((set, get) =>({
     // bear: 0,
     psyData: {
         score: initialScore ,

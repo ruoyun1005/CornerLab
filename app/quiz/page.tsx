@@ -3,14 +3,13 @@ import Link from "next/link";
 import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {usePsyScore} from "../../store/store"
-import type { resultData, resultKeys } from "../data/type";  
-
 
 export default function Question() {
   const router  = useRouter();
 
   const psyData = usePsyScore( (state)=> state.psyData );
   const setPsyScore = usePsyScore( (state) => state.setScore);
+  const getResult = usePsyScore((state) => state.getResult);
   
   const [questionIndex, setQuestionIndex] = useState(0);
 
@@ -21,26 +20,22 @@ export default function Question() {
     //console.log("目前分數：" + psyData.score);
   },[psyData.score]);
   
-  function nextQuestion(optionIndex : number){
-
+  function nextQuestion(optionIndex: number) {
     const selectedOption = psyData.quizData[questionIndex].options[optionIndex];
-    const getResult = usePsyScore((state) => state.getResult);
     console.log("使用者選擇" + optionIndex);
 
     setPsyScore(selectedOption.label);
     console.log(psyData.score);
-  
 
-  if(questionIndex < psyData.quizData.length-1){
-    console.log("下一題");
-    setQuestionIndex( questionIndex + 1);
-  }else{
-    console.log("看結果");
-    console.log(getResult);
-    router.push("/loading");
+    if (questionIndex < psyData.quizData.length - 1) {
+      console.log("下一題");
+      setQuestionIndex(questionIndex + 1);
+    } else {
+      console.log("看結果");
+      getResult();
+      router.push("/loading");
+    }
   }
-  
-}
   return (
     <>
     <div className="flex flex-col py-8">
@@ -61,7 +56,7 @@ export default function Question() {
           <div className="title-text flex items-end whitespace-pre-line text-right  translate-y-1/4">{psyData.quizData[questionIndex].title }</div>
         </div>
         
-        <div className="flex h-full flex-col justify-center gap-8 mt-8 px-8">
+        <div className="flex h-full flex-col justify-center gap-8 mt-16 px-8">
           
           <div onClick={() => nextQuestion(0)} className="text text-center flex justify-center items-center border-2 border-[#252525] py-[30px] px-4 rounded-2xl option-card"
             style={ {backgroundColor: psyData.quizData[questionIndex].options[0].color} }>
