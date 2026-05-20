@@ -31,7 +31,7 @@ const questionData = [
         {text: "哭天喊地，用嘴巴做事", label: "mouth", color: "#FDE196"}
       ]
     },
-    {
+    { 
       title: "群組突然安靜下來的時候，\n你比較像：",
       hightlight: "#FDE196",
       options: [
@@ -122,31 +122,35 @@ const usePsyScore = create((set, get) =>({
     psyData: {
         score: initialScore ,
         quizData: questionData,
+        answers: {},
         resultKey: null,
 
     },
 
-    setScore: (label) => set( (state) => ( {
-        psyData: {
+    setAnswer: (questionIndex, label) => set((state) => ({
+      psyData: {
         ...state.psyData,
-        score: {
-          ...state.psyData.score,
-          [label]: state.psyData.score[label] + 1,
-        },},
+        answers: {
+          ...state.psyData.answers,
+          [questionIndex]: label,
+        },
+      },
     })),
 
-    getResult:() => {
-      const scoreMap = get().psyData.score;
+    getResult: () => {
+      const answers = get().psyData.answers;
+      const scoreMap = { ...initialScore };
+      Object.values(answers).forEach((label) => {
+        if (label in scoreMap) scoreMap[label]++;
+      });
       const topKey = Object.entries(scoreMap).sort((a, b) => b[1] - a[1])[0][0];
-      
+      console.log('[getResult] answers:', answers);
+      console.log('[getResult] scoreMap:', scoreMap);
+      console.log('[getResult] 結果:', topKey);
       set((state) => ({
-        psyData:{
-          ...state.psyData,
-          resultKey: topKey,
-        }
+        psyData: { ...state.psyData, resultKey: topKey },
       }));
-          
-  },
+    },
     
     resetScore: () =>
         set((state) => ({

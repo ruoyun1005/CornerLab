@@ -1,92 +1,130 @@
 "use client";
-import Link from "next/link";
-import {useState, useEffect} from "react";
-import {useRouter} from "next/navigation";
-import {usePsyScore} from "../../store/store"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { usePsyScore } from "../../store/store";
+import type { question } from "../data/type";
+
+type QuizOption = {
+  text: string;
+  label: string;
+  color: string;
+};
 
 export default function Question() {
-  const router  = useRouter();
+  const router = useRouter();
 
-  const psyData = usePsyScore( (state)=> state.psyData );
-  const setPsyScore = usePsyScore( (state) => state.setScore);
+  const psyData = usePsyScore((state) => state.psyData);
+  const setAnswer = usePsyScore((state) => state.setAnswer);
   const getResult = usePsyScore((state) => state.getResult);
-  
+
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  console.log(psyData);
-  console.log(psyData.quizData);
-  
-  useEffect(() => {
-    //console.log("目前分數：" + psyData.score);
-  },[psyData.score]);
-  
-  function nextQuestion(optionIndex: number) {
-    const selectedOption = psyData.quizData[questionIndex].options[optionIndex];
-    console.log("使用者選擇" + optionIndex);
-
-    setPsyScore(selectedOption.label);
-    console.log(psyData.score);
-
+  function confirmAnswer() {
+    if (selectedIndex === null) return;
+    const selectedOption = psyData.quizData[questionIndex].options[selectedIndex];
+    setAnswer(questionIndex, selectedOption.label);
+    console.log(`[Q${questionIndex + 1}] 選了：${selectedOption.label}`, {
+      answers: { ...psyData.answers, [questionIndex]: selectedOption.label },
+    });
+    setSelectedIndex(null);
     if (questionIndex < psyData.quizData.length - 1) {
-      console.log("下一題");
       setQuestionIndex(questionIndex + 1);
     } else {
-      console.log("看結果");
       getResult();
       router.push("/loading");
     }
   }
+
+  function prevQuestion() {
+    if (questionIndex === 0) return;
+    const prevIndex = questionIndex - 1;
+    const prevAnswerLabel = psyData.answers[prevIndex];
+    const prevOptionIndex = psyData.quizData[prevIndex].options.findIndex(
+      (o: any) => o.label === prevAnswerLabel
+    );
+    setQuestionIndex(prevIndex);
+    setSelectedIndex(prevOptionIndex >= 0 ? prevOptionIndex : null);
+  }
+
+  const currentQuestion = psyData.quizData[questionIndex];
+
   return (
-    <>
-    <div className="flex flex-col py-8">
-
+    <div className=" min-h-full flex-col py-4 mx-auto grid grid-rows-[auto_auto_1fr_auto]">
       {/* 進度條 */}
-      <div className="border-2 border-[#252525] h-2 rounded-full mx-8"></div>
-      
-      {/* 題目 */}
-      <div>
-        <div className="flex flex-row justify-between items-start px-8 mt-8">
-          <div className="relative">
-          <div
-            className="absolute z-0 h-[30px] w-[60px] left-[36px] top-[52px]"
-            style={{ backgroundColor: psyData.quizData[questionIndex].hightlight }}
-          />
-            <div className="number-text relative leading-none z-10">{String(questionIndex + 1).padStart(2, "0")}</div>
+      <div className="px-4 sm:px-6 pt-2">
+        <div className="h-2 rounded-full border-2 border-[#252525]" />
+      </div>
+
+      {/* 題號 題目 */}
+      <div className="mt-6 flex items-start gap-4 px-4 sm:px-6">
+        <div className="relative shrink-0">
+          {/* <div
+            className="absolute left-[32px] top-[56px] z-0 h-5 w-12 sm:left-[34px] sm:top-[48px] sm:h-7 sm:w-16"
+            style={{ backgroundColor: currentQuestion.hightlight }}
+          /> */}
+          <div className="number-text relative z-10 text-[52px] leading-none sm:text-[72px]">
+            {String(questionIndex + 1).padStart(2, "0")}
           </div>
-          <div className="title-text flex items-end whitespace-pre-line text-right  translate-y-1/4">{psyData.quizData[questionIndex].title }</div>
         </div>
-        
-        <div className="flex h-full flex-col justify-center gap-8 mt-16 px-8">
-          
-          <div onClick={() => nextQuestion(0)} className="text text-center flex justify-center items-center border-2 border-[#252525] py-[30px] px-4 rounded-2xl option-card"
-            style={ {backgroundColor: psyData.quizData[questionIndex].options[0].color} }>
-            { psyData.quizData[questionIndex].options[0].text }
-            </div>
-
-          
-          <div onClick={() => nextQuestion(1)} className="text text-center flex justify-center items-center border-2 border-[#252525] py-[30px] px-4 rounded-2xl option-card"
-            style={ {backgroundColor: psyData.quizData[questionIndex].options[1].color} }>
-            { psyData.quizData[questionIndex].options[1].text }
-            </div>
-
-           
-          <div onClick={() => nextQuestion(2)} className="text text-center flex justify-center items-center border-2 border-[#252525] py-[30px] px-4 rounded-2xl option-card"
-            style={ {backgroundColor: psyData.quizData[questionIndex].options[2].color} }>
-            {psyData.quizData[questionIndex].options[2].text }
-           </div>
-
-          
-          <div onClick={() => nextQuestion(3)} className="text text-center flex justify-center items-center border-2 border-[#252525] py-[30px] px-4 rounded-2xl option-card"
-            style={ {backgroundColor: psyData.quizData[questionIndex].options[3].color} }>
-            { psyData.quizData[questionIndex].options[3].text }
-            </div>
+ 
+        <div className="min-w-0 flex-1 pt-1">
+          <div className="title-text whitespace-pre-line text-right text-[16px] leading-[1.45] sm:text-[18px]">
+            {currentQuestion.title}
+          </div>
         </div>
       </div>
 
-      
-      {/* <Link className="text-[#252525] border border-black px-3 py-2" href="/loading">查看結果</Link> */}
-    </div>
+      <div className="mt-6 h-full flex flex-col justify-center gap-5 px-4 sm:px-6">
+        {currentQuestion.options.map(
+          (option: question["options"][number], index: number) => {
+            const isSelected = selectedIndex === index;
+            return (
+              <button
+                key={index}
+                onClick={() => setSelectedIndex(index)}
+                className="flex min-h-[80px] items-center justify-center rounded-2xl border-2 border-[#252525] px-6 py-3 text-center transition-all duration-150"
+                style={{
+                  backgroundColor: option.color,
+                  boxShadow: isSelected ? "none" : "0 10px 0 #252525",
+                  transform: isSelected ? "translateY(8px)" : "translateY(0)",
+                }}
+              >
+                <span className="text text-[15px] leading-normal sm:text-[16px]">
+                  {option.text}
+                </span>
+              </button>
+            );
+          }
+        )}
+      </div>
 
-    </>
+      <div className="mt-6 px-4 sm:px-6 flex gap-3">
+        {questionIndex > 0 && (
+          <button
+            onClick={prevQuestion}
+            className="rounded-2xl border-2 border-[#252525] py-4 px-5 font-zh-eb text-[15px] bg-white transition-all duration-150 active:shadow-none active:translate-y-1"
+            style={{ boxShadow: "0 8px 0 #252525" }}
+          >
+            ←
+          </button>
+        )}
+        <button
+          onClick={confirmAnswer}
+          disabled={selectedIndex === null}
+          className="flex-1 rounded-2xl border-2 border-[#252525] py-4 font-zh-eb text-[15px] transition-all duration-150 active:shadow-none active:translate-y-1"
+          style={{
+            backgroundColor: selectedIndex !== null ? currentQuestion.options[selectedIndex].color : "#e0ddd6",
+            boxShadow: selectedIndex !== null ? "0 8px 0 #252525" : "none",
+            opacity: selectedIndex !== null ? 1 : 0.4,
+          }}
+        >
+          {questionIndex < psyData.quizData.length - 1 ? "下一題 →" : "看結果 →"}
+        </button>
+      </div>
+
+      <div className="h-[2px] bg-[#252525] mt-6"/>
+      <div className="font-zh text-[10px] flex justify-center text-center mt-2">本測驗沒有科學根據，只有對你精神狀態的片面觀察</div>
+    </div>
   );
 }
